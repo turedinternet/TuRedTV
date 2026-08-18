@@ -14,7 +14,7 @@ export const DEFAULT_APP_DATA = {
   version: "2.5.0",
   fileSize: "45.2 MB",
   downloadUrl: "",
-  downloaderCode: "549210",
+  downloaderCode: "",
   minAndroid: "Android 5.0+",
   releaseDate: "17 de Agosto, 2026",
   changelog: "• Transmisión ultra rápida en FHD y 4K\n• Nueva guía de programación interactiva\n• Optimizado para controles de Firestick y Smart TV",

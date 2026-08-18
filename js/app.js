@@ -24,15 +24,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (appVersionEl) appVersionEl.textContent = `v${data.version || '2.5.0'}`;
     if (appSizeEl) appSizeEl.textContent = data.fileSize || '45.2 MB';
     if (appMinAndroidEl) appMinAndroidEl.textContent = data.minAndroid || 'Android 5.0+';
-    if (downloaderCodeEl) downloaderCodeEl.textContent = data.downloaderCode || '549210';
+    if (downloaderCodeEl) downloaderCodeEl.textContent = data.downloaderCode || '---';
     
     if (downloadBtn) {
+      const base = window.location.origin + window.location.pathname.replace(/index\.html$/, '').replace(/\/$/, '/');
+      const downloadLink = base + 'download.html';
+
       if (data.downloadUrl) {
-        downloadBtn.href = data.downloadUrl;
-        downloadBtn.setAttribute('download', `tured-tv-v${data.version || 'latest'}.apk`);
+        downloadBtn.href = downloadLink;
       } else {
         downloadBtn.href = '#';
-        downloadBtn.removeAttribute('download');
         downloadBtn.textContent = 'Configura la URL de descarga en el panel de administración';
         downloadBtn.style.opacity = '0.6';
         downloadBtn.style.cursor = 'not-allowed';
@@ -43,9 +44,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       changelogEl.textContent = data.changelog;
     }
 
-    // Generate QR Code image URL for quick scanning
-    if (qrContainer && data.downloadUrl) {
-      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(data.downloadUrl)}&color=007cc3&bgcolor=ffffff`;
+    // Generate QR Code image URL pointing to download.html
+    if (qrContainer) {
+      const base = window.location.origin + window.location.pathname.replace(/index\.html$/, '').replace(/\/$/, '/');
+      const downloadLink = base + 'download.html';
+      const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(downloadLink)}&color=007cc3&bgcolor=ffffff`;
       qrContainer.src = qrApiUrl;
     }
   }

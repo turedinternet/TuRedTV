@@ -85,6 +85,16 @@
         </div>
       </div>
 
+      <!-- Permanent Download Link Display -->
+      <div style="background: rgba(0, 124, 195, 0.15); border: 1px solid var(--primary-blue); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem;">
+        <label class="form-label" style="color: var(--light-blue); margin-bottom: 0.75rem;">Enlace permanente de descarga (para usuarios)</label>
+        <div style="display: flex; align-items: center; gap: 0.75rem; background: #0d0a09; padding: 0.75rem 1rem; border-radius: var(--radius-sm); border: 1px solid rgba(93, 162, 209, 0.3);">
+          <code id="permanent-download-link" style="flex: 1; font-family: monospace; font-size: 0.9rem; color: #ffffff; word-break: break-all;">Cargando...</code>
+          <button type="button" id="copy-permanent-link" class="btn-copy" style="white-space: nowrap;">Copiar</button>
+        </div>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">Este enlace siempre funciona. Si cambias la URL de Firestore, la descarga se actualiza automáticamente.</p>
+      </div>
+
       <form id="app-config-form">
         <div class="form-group">
           <label class="form-label" for="admin-download-url">URL de Descarga (se guarda en Firestore)</label>
@@ -108,8 +118,8 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="admin-downloader-code">Código de Downloader (Fijo)</label>
-            <input type="text" id="admin-downloader-code" class="form-input" placeholder="549210" required>
+            <label class="form-label" for="admin-downloader-code">Código de Downloader</label>
+            <input type="text" id="admin-downloader-code" class="form-input" placeholder="Escribe el código" required>
           </div>
 
           <div class="form-group">

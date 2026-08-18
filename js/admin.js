@@ -34,15 +34,28 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   let currentAuthUser = null;
 
+  // Permanent link display elements
+  const permanentLinkEl = document.getElementById('permanent-download-link');
+  const copyPermanentLinkBtn = document.getElementById('copy-permanent-link');
+
+  // Build permanent link based on current page location
+  function getPermanentLink() {
+    const base = window.location.origin + window.location.pathname.replace(/admin\.html$/, '');
+    return base + 'download.html';
+  }
+
   // Initialize UI & load initial config
   const currentConfig = await loadAppConfig();
   populateForm(currentConfig);
   checkFirebaseStatus();
 
+  // Show permanent link
+  if (permanentLinkEl) permanentLinkEl.textContent = getPermanentLink();
+
   function populateForm(data) {
     if (adminUrlInput) adminUrlInput.value = data.downloadUrl || '';
     if (adminVersionInput) adminVersionInput.value = data.version || '2.5.0';
-    if (adminDownloaderCodeInput) adminDownloaderCodeInput.value = data.downloaderCode || '549210';
+    if (adminDownloaderCodeInput) adminDownloaderCodeInput.value = data.downloaderCode || '';
     if (adminFileSizeInput) adminFileSizeInput.value = data.fileSize || '45.2 MB';
     if (adminMinAndroidInput) adminMinAndroidInput.value = data.minAndroid || 'Android 5.0+';
     if (adminChangelogInput) adminChangelogInput.value = data.changelog || '';
@@ -107,6 +120,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   function showDashboard() {
     authContainer.style.display = 'none';
     dashboardContainer.style.display = 'block';
+  }
+
+  // Copy permanent link
+  if (copyPermanentLinkBtn && permanentLinkEl) {
+    copyPermanentLinkBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(permanentLinkEl.textContent).then(() => {
+        showToast('Enlace permanente copiado');
+        copyPermanentLinkBtn.textContent = '¡Copiado!';
+        setTimeout(() => copyPermanentLinkBtn.textContent = 'Copiar', 2000);
+      }).catch(() => {
+        showToast('No se pudo copiar');
+      });
+    });
   }
 
   // Handle APK file upload - show file info only (actual upload is via GitHub Releases)

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Descargando TuRed TV...</title>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+  <script type="module">
+    import { loadAppConfig } from './js/firebase-config.js';
+
+    async function redirect() {
+      try {
+        const config = await loadAppConfig();
+        if (config && config.downloadUrl) {
+          window.location.href = config.downloadUrl;
+        } else {
+          document.body.innerHTML = '<p style="color:#808080;font-family:sans-serif;text-align:center;margin-top:4rem;">No hay enlace de descarga configurado. Ve al panel de administración.</p>';
+        }
+      } catch (e) {
+        document.body.innerHTML = '<p style="color:#808080;font-family:sans-serif;text-align:center;margin-top:4rem;">Error al cargar la configuración.</p>';
+      }
+    }
+
+    redirect();
+  </script>
+</body>
+</html>

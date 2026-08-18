@@ -170,10 +170,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       try {
-        await saveAppConfig(updatedData, currentAuthUser);
-        showToast('¡App actualizada exitosamente! Los cambios ya están en vivo.');
+        const result = await saveAppConfig(updatedData, currentAuthUser);
+        if (result.firestoreSaved) {
+          showToast('¡Guardado en Firestore! Los cambios ya están en vivo.');
+        } else {
+          showToast('Guardado solo en este navegador. Firestore no disponible.');
+        }
       } catch (err) {
-        showToast('Error al guardar la configuración');
+        showToast(`Error: ${err.message || 'No se pudo guardar'}`);
         console.error(err);
       } finally {
         if (btnSave) {

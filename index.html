@@ -17,6 +17,11 @@
   
   <!-- CSS Styles -->
   <link rel="stylesheet" href="css/styles.css">
+  <script>
+    if (window.location.search === '?Download') {
+      window.location.replace('Download.html');
+    }
+  </script>
 </head>
 <body>
 
@@ -168,10 +173,5 @@
 
   <!-- Client JavaScript Module -->
   <script type="module" src="js/app.js"></script>
-  <script>
-    if (window.location.search === '?Download') {
-      window.location.href = 'Download.html';
-    }
-  </script>
 </body>
 </html>

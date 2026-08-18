@@ -87,6 +87,8 @@ export async function saveAppConfig(newConfig, authUser = null) {
   const updated = { ...current, ...newConfig, updatedAt: new Date().toISOString() };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
 
+  let firestoreSaved = false;
+
   // Try saving to Firebase Firestore if configured
   const fbConfig = getFirebaseCredentials();
   if (fbConfig && fbConfig.apiKey && fbConfig.projectId) {
@@ -99,10 +101,12 @@ export async function saveAppConfig(newConfig, authUser = null) {
       const db = getFirestore(app);
       
       await setDoc(doc(db, "appStore", "currentApp"), updated, { merge: true });
+      firestoreSaved = true;
     } catch (err) {
       console.error("Error saving to Firebase Firestore:", err);
+      throw new Error(`Firestore: ${err.message}`);
     }
   }
 
-  return updated;
+  return { ...updated, firestoreSaved };
 }

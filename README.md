@@ -6,7 +6,7 @@ Portal de descarga oficial de la aplicación **TuRed TV** para Smart TV, Fire TV
 
 - Portal de descarga pública con enlace permanente
 - Panel de administración protegido con Firebase Authentication
-- Código Downloader fijo para Smart TV / Firestick (`549210`)
+- Código Downloader fijo para Smart TV / Firestick (`6857402`)
 - Código QR de descarga rápida
 - Diseño responsive con glassmorphism oscuro
 - Compatible con GitHub Pages (zero-build, vanilla JS)

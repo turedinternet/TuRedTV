@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración - TuRed TV</title>
+  <meta name="theme-color" content="#007cc3">
+  
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="shortcut icon" href="icon.png">
+  
+  <!-- Google Fonts - Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Header & Navbar -->
+  <header class="navbar">
+    <div class="container navbar-inner">
+      <a href="index.html" class="brand-logo" title="Volver a la Web Principal">
+        <img src="icon.png" alt="TuRed Logo" class="brand-logo-img" style="width: 42px; height: 42px; object-fit: contain; filter: drop-shadow(0 0 8px var(--glow-primary));" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="display: none; width: 42px; height: 42px;">
+          <defs>
+            <linearGradient id="logo-grad-admin" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#007cc3"/>
+              <stop offset="100%" stop-color="#5da2d1"/>
+            </linearGradient>
+          </defs>
+          <rect width="100" height="100" rx="24" fill="url(#logo-grad-admin)"/>
+          <path d="M25 35 L75 35 L75 48 L58 48 L58 75 L42 75 L42 48 L25 48 Z" fill="#ffffff"/>
+        </svg>
+        <span class="brand-title">TuRed <span style="-webkit-text-fill-color: #5da2d1;">Admin</span></span>
+      </a>
+
+      <div class="nav-actions">
+        <a href="index.html" class="nav-link-admin">
+          &larr; Ver Web Principal
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding: 2.5rem 1.25rem;">
+    
+    <!-- 1. AUTHENTICATION SECTION (Firebase Sign-In) -->
+    <div id="auth-container" class="download-card admin-card auth-card">
+      <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem; text-align: center;">Acceso al Panel de Control</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem; text-align: center; margin-bottom: 2rem;">Inicia sesión con tu cuenta de administrador de Firebase.</p>
+      
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label" for="login-email">Correo Electrónico Admin</label>
+          <input type="email" id="login-email" class="form-input" placeholder="admin@tured.tv" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="login-password">Contraseña</label>
+          <input type="password" id="login-password" class="form-input" placeholder="••••••••" required>
+        </div>
+
+        <button type="submit" id="btn-login" class="btn-primary-download">
+          Iniciar Sesión Seguro
+        </button>
+      </form>
+
+      <div style="margin-top: 1.5rem; text-align: center;">
+        <p style="font-size: 0.8rem; color: var(--text-muted);">Acceso restringido a administradores autorizados vía Firebase Authentication.</p>
+      </div>
+    </div>
+
+    <!-- 2. DASHBOARD SECTION (Shown after login) -->
+    <div id="dashboard-container" class="download-card admin-card" style="display: none; max-width: 760px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h2 style="font-size: 1.6rem; font-weight: 800;">Gestión de App TuRed TV</h2>
+          <span id="status-badge" class="badge-status local">Modo Demo Local</span>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button id="btn-open-firebase-settings" class="btn-secondary" type="button">🔑 Claves Firebase</button>
+          <button id="btn-logout" class="btn-secondary" type="button" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">Cerrar Sesión</button>
+        </div>
+      </div>
+
+      <form id="app-config-form">
+        <div class="form-group">
+          <label class="form-label" for="admin-download-url">URL de Descarga (se guarda en Firestore)</label>
+          <input type="url" id="admin-download-url" class="form-input" placeholder="Pega aquí la URL completa de descarga del APK" required>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.3rem;">Escribe la URL completa. Se guarda en Firestore y la página principal la lee automáticamente.</p>
+        </div>
+
+        <div class="form-group" style="background: rgba(31, 26, 23, 0.5); padding: 1rem; border-radius: var(--radius-sm); border: 1px dashed var(--secondary-blue);">
+          <label class="form-label">Actualizar APK (vía GitHub Releases)</label>
+          <p style="font-size: 0.85rem; color: var(--text-main); margin-bottom: 0.75rem;">Para actualizar la app: sube el nuevo APK a <strong>GitHub Releases</strong> con el nombre <code>tured-tv-latest.apk</code>, luego cambia la URL de descarga arriba y haz clic en "Publicar".</p>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">La URL de Firestore se actualiza y la página principal mostrará el nuevo enlace.</p>
+          <a href="https://github.com" target="_blank" rel="noopener" class="btn-secondary" style="display: inline-flex; margin-top: 0.75rem; font-size: 0.85rem;">
+            Subir APK a GitHub Releases &rarr;
+          </a>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="admin-version">Número de Versión</label>
+            <input type="text" id="admin-version" class="form-input" placeholder="2.5.0" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="admin-downloader-code">Código de Downloader (Fijo)</label>
+            <input type="text" id="admin-downloader-code" class="form-input" placeholder="549210" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="admin-file-size">Tamaño de Archivo</label>
+            <input type="text" id="admin-file-size" class="form-input" placeholder="45.2 MB" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="admin-min-android">Requisito Mínimo</label>
+            <input type="text" id="admin-min-android" class="form-input" placeholder="Android 5.0+" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="admin-changelog">Novedades de la Versión (Changelog)</label>
+          <textarea id="admin-changelog" class="form-textarea" placeholder="• Mejora en la velocidad de transmisión&#10;• Corrección de errores en Smart TV"></textarea>
+        </div>
+
+        <button type="submit" id="btn-save-app" class="btn-primary-download" style="width: 100%; margin-top: 1rem;">
+          💾 Publicar y Actualizar App
+        </button>
+      </form>
+    </div>
+
+  </main>
+
+  <!-- Firebase Credentials Modal -->
+  <div class="modal-overlay" id="firebase-modal">
+    <div class="modal-container" style="max-width: 550px;">
+      <button class="modal-close" id="close-firebase-btn" type="button">&times;</button>
+      <h3 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 0.5rem;">Configurar Proyecto Firebase</h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">Pega las credenciales de tu consola de Firebase para activar la autenticación y la base de datos en tiempo real.</p>
+      
+      <form id="firebase-credentials-form">
+        <div class="form-group">
+          <label class="form-label">API Key</label>
+          <input type="text" id="fb-api-key" class="form-input" placeholder="AIzaSy...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Auth Domain</label>
+          <input type="text" id="fb-auth-domain" class="form-input" placeholder="tu-proyecto.firebaseapp.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Project ID</label>
+          <input type="text" id="fb-project-id" class="form-input" placeholder="tu-proyecto">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Storage Bucket</label>
+          <input type="text" id="fb-storage-bucket" class="form-input" placeholder="tu-proyecto.appspot.com">
+        </div>
+        <button type="submit" class="btn-primary-download" style="width: 100%; font-size: 1rem; padding: 0.85rem;">
+          Guardar Credenciales de Firebase
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="js/admin.js"></script>
+</body>
+</html>

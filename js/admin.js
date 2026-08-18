@@ -87,10 +87,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       if (creds && creds.apiKey && creds.projectId) {
         try {
-          const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+          const { initializeApp, getApps } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
           const { getAuth, signInWithEmailAndPassword } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
 
-          const app = initializeApp(creds, "admin-auth");
+          const apps = getApps();
+          const app = apps.length ? apps[0] : initializeApp(creds, "tured-main");
           const auth = getAuth(app);
           const userCredential = await signInWithEmailAndPassword(auth, email, password);
           currentAuthUser = userCredential.user;

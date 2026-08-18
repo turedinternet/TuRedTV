@@ -25,6 +25,11 @@ export const DEFAULT_APP_DATA = {
 const STORAGE_KEY = 'tured_tv_app_config';
 const FIREBASE_CONFIG_KEY = 'tured_tv_firebase_keys';
 
+// Singleton app instance
+let firebaseApp = null;
+let firebaseDb = null;
+let firebaseAuth = null;
+
 /**
  * Retrieves the stored Firebase Config or returns defaults
  */
@@ -47,32 +52,47 @@ export function saveFirebaseCredentials(config) {
 }
 
 /**
+ * Initialize or return the single Firebase app instance
+ */
+async function getFirebaseApp() {
+  if (firebaseApp) return { app: firebaseApp, db: firebaseDb, auth: firebaseAuth };
+
+  const fbConfig = getFirebaseCredentials();
+  if (!fbConfig || !fbConfig.apiKey || !fbConfig.projectId) return null;
+
+  const { initializeApp, getApps } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+  const { getFirestore } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+  const { getAuth } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+
+  const apps = getApps();
+  firebaseApp = apps.length ? apps[0] : initializeApp(fbConfig, "tured-main");
+  firebaseDb = getFirestore(firebaseApp);
+  firebaseAuth = getAuth(firebaseApp);
+
+  return { app: firebaseApp, db: firebaseDb, auth: firebaseAuth };
+}
+
+/**
  * Loads current App details (First tries Firebase if initialized, else LocalStorage/Default)
  */
 export async function loadAppConfig() {
-  // First check LocalStorage override
   const localData = localStorage.getItem(STORAGE_KEY);
   let appData = localData ? JSON.parse(localData) : { ...DEFAULT_APP_DATA };
 
-  // Attempt Firebase load if configured
-  const fbConfig = getFirebaseCredentials();
-  if (fbConfig && fbConfig.apiKey && fbConfig.projectId) {
-    try {
-      const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
-      const { getFirestore, doc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-      
-      const app = initializeApp(fbConfig, "tured-reader");
-      const db = getFirestore(app);
-      const docRef = doc(db, "appStore", "currentApp");
-      const docSnap = await getDoc(docRef);
+  try {
+    const fb = await getFirebaseApp();
+    if (!fb) return appData;
 
-      if (docSnap.exists()) {
-        appData = { ...appData, ...docSnap.data() };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
-      }
-    } catch (err) {
-      console.warn("Firebase load fallback to local data:", err);
+    const { doc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    const docRef = doc(fb.db, "appStore", "currentApp");
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      appData = { ...appData, ...docSnap.data() };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
     }
+  } catch (err) {
+    console.warn("Firebase load fallback to local data:", err);
   }
 
   return appData;
@@ -82,30 +102,24 @@ export async function loadAppConfig() {
  * Saves updated App details (Updates LocalStorage and Firebase if available)
  */
 export async function saveAppConfig(newConfig, authUser = null) {
-  // Save to LocalStorage
   const current = await loadAppConfig();
   const updated = { ...current, ...newConfig, updatedAt: new Date().toISOString() };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
 
   let firestoreSaved = false;
 
-  // Try saving to Firebase Firestore if configured
-  const fbConfig = getFirebaseCredentials();
-  if (fbConfig && fbConfig.apiKey && fbConfig.projectId) {
-    try {
-      const { initializeApp, getApps } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
-      const { getFirestore, doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-
-      const apps = getApps();
-      const app = apps.length ? apps[0] : initializeApp(fbConfig);
-      const db = getFirestore(app);
-      
-      await setDoc(doc(db, "appStore", "currentApp"), updated, { merge: true });
-      firestoreSaved = true;
-    } catch (err) {
-      console.error("Error saving to Firebase Firestore:", err);
-      throw new Error(`Firestore: ${err.message}`);
+  try {
+    const fb = await getFirebaseApp();
+    if (!fb) {
+      return { ...updated, firestoreSaved: false };
     }
+
+    const { doc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    await setDoc(doc(fb.db, "appStore", "currentApp"), updated, { merge: true });
+    firestoreSaved = true;
+  } catch (err) {
+    console.error("Error saving to Firebase Firestore:", err);
+    throw new Error(`Firestore: ${err.message}`);
   }
 
   return { ...updated, firestoreSaved };

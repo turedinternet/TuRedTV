@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Build permanent link based on current page location
   function getPermanentLink() {
     const base = window.location.origin + window.location.pathname.replace(/admin\.html$/, '');
-    return base + 'download.html';
+    return base + 'Download.html';
   }
 
   // Initialize UI & load initial config

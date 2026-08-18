@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     if (downloadBtn) {
       const base = window.location.origin + window.location.pathname.replace(/index\.html$/, '').replace(/\/$/, '/');
-      const downloadLink = base + 'download.html';
+      const downloadLink = base + 'Download.html';
 
       if (data.downloadUrl) {
         downloadBtn.href = downloadLink;
@@ -44,10 +44,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       changelogEl.textContent = data.changelog;
     }
 
-    // Generate QR Code image URL pointing to download.html
+    // Generate QR Code image URL pointing to Download.html
     if (qrContainer) {
       const base = window.location.origin + window.location.pathname.replace(/index\.html$/, '').replace(/\/$/, '/');
-      const downloadLink = base + 'download.html';
+      const downloadLink = base + 'Download.html';
       const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(downloadLink)}&color=007cc3&bgcolor=ffffff`;
       qrContainer.src = qrApiUrl;
     }
